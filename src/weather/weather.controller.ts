@@ -6,9 +6,11 @@ import {
   Query,
   Param,
   Delete,
+  UseInterceptors,
 } from '@nestjs/common';
 import { WeatherService } from './weather.service';
 import { Part, Weather } from './entities/weather.entity';
+import { WeatherTransformInterceptor } from './transform.interceptor';
 
 export interface Coordinates {
   coord: {
@@ -39,6 +41,7 @@ export class WeatherController {
   }
 
   @Get()
+  @UseInterceptors(WeatherTransformInterceptor)
   findOne(
     @Query('lat') lat: string,
     @Query('lon') lon: string,

@@ -1,8 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { CreateWeatherDto } from './dto/create-weather.dto';
-import { UpdateWeatherDto } from './dto/update-weather.dto';
 import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom } from 'rxjs';
 import { Weather } from './entities/weather.entity';
@@ -38,16 +36,14 @@ export class WeatherService {
         ),
     );
 
-    const myObject = { record_id: data.id };
-
-    const updatedObject = Object.assign(data, {
-      record_id: myObject.record_id,
+    const rootId = { record_id: data.id };
+    const updatedWeatherEntity = Object.assign(data, {
+      record_id: rootId.record_id,
       part,
     });
-    console.log(updatedObject);
-    delete updatedObject['id'];
+    delete updatedWeatherEntity['id'];
 
-    return this.weatherRepository.save(updatedObject);
+    return this.weatherRepository.save(updatedWeatherEntity);
   }
 
   async findOne(conditions: Coordinates): Promise<Weather> {
@@ -57,14 +53,13 @@ export class WeatherService {
       part,
     } = conditions;
     const queryBuilder = this.weatherRepository.createQueryBuilder('weather');
-    console.log(part)
     queryBuilder
       .where("weather.coord ->> 'lat' = :lat", { lat: Number(lat) })
-      .andWhere("weather.coord ->> 'lon' = :lon", { lon: Number(lon) }); // Replace with the actual value
+      .andWhere("weather.coord ->> 'lon' = :lon", { lon: Number(lon) });
 
-      if (part && part.length > 0) {
-        queryBuilder.andWhere('weather.part @> :part', { part:part})
-      }
+    if (part && part.length > 0) {
+      queryBuilder.andWhere('weather.part @> :part', { part: part });
+    }
 
     return queryBuilder.getOne();
   }

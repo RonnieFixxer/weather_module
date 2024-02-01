@@ -6,7 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Weather } from './entities/weather.entity';
 
 @Module({
-  imports:[HttpModule, TypeOrmModule.forFeature([Weather])],
+  imports: [HttpModule, TypeOrmModule.forFeature([Weather])],
   controllers: [WeatherController],
   providers: [WeatherService],
 })

@@ -26,7 +26,7 @@ export class Weather {
       main: string;
       description: string;
       icon: string;
-    }
+    },
   ];
 
   @Column()
@@ -84,7 +84,7 @@ export class Weather {
     type: 'text',
     array: true,
     enum: Part,
-    default: []
+    default: [],
   })
   part: Part[];
 }
