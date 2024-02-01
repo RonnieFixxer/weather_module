@@ -1,5 +1,13 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
+export enum Part {
+  CURRENT = 'current',
+  MINUTELY = 'minutely',
+  HOURLY = 'hourly',
+  DAILY = 'daily',
+  ALERTS = 'alerts',
+}
+
 @Entity()
 export class Weather {
   @PrimaryGeneratedColumn()
@@ -71,4 +79,12 @@ export class Weather {
 
   @Column()
   cod: number;
+
+  @Column({
+    type: 'text',
+    array: true,
+    enum: Part,
+    default: []
+  })
+  part: Part[];
 }

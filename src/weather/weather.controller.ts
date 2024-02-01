@@ -1,30 +1,57 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Query,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { WeatherService } from './weather.service';
-import { CreateWeatherDto } from './dto/create-weather.dto';
-import { UpdateWeatherDto } from './dto/update-weather.dto';
+import { Part, Weather } from './entities/weather.entity';
 
+export interface Coordinates {
+  coord: {
+    lat: string | undefined;
+    lon: string | undefined;
+  };
+  part: Part[] | [];
+}
 @Controller('weather')
 export class WeatherController {
   constructor(private readonly weatherService: WeatherService) {}
 
   @Post()
-  create(@Body() createWeatherDto: CreateWeatherDto) {
-    return this.weatherService.create(createWeatherDto);
+  create(
+    @Query('lat') lat: string,
+    @Query('lon') lon: string,
+    @Query('part') part: string,
+  ) {
+    const conditions: Coordinates = {
+      coord: {
+        lat,
+        lon,
+      },
+      part: part?.split(',') as Part[],
+    };
+
+    return this.weatherService.create(conditions);
   }
 
   @Get()
-  findAll() {
-    return this.weatherService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.weatherService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWeatherDto: UpdateWeatherDto) {
-    return this.weatherService.update(+id, updateWeatherDto);
+  findOne(
+    @Query('lat') lat: string,
+    @Query('lon') lon: string,
+    @Query('part') part: string,
+  ) {
+    const conditions: Coordinates = {
+      coord: {
+        lat,
+        lon,
+      },
+      part: part?.split(',') as Part[],
+    };
+    return this.weatherService.findOne(conditions);
   }
 
   @Delete(':id')
